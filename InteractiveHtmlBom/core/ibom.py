@@ -72,16 +72,13 @@ def skip_component(m, config, extra_data):
         return True
 
     # skip components with wrong variant field
-    if config.board_variant_field and config.board_variant_whitelist:
-        if m.ref in extra_data:
-            ref_variant = extra_data[m.ref].get(config.board_variant_field, '')
-            if ref_variant not in config.board_variant_whitelist:
-                return True
+    if m.ref in extra_data and config.board_variant_field:
 
-    if config.board_variant_field and config.board_variant_blacklist:
-        if m.ref in extra_data:
-            ref_variant = extra_data[m.ref].get(config.board_variant_field, '')
-            if ref_variant and ref_variant in config.board_variant_blacklist:
+        ref_variants = extra_data[m.ref].get(config.board_variant_field, '').split()
+        for ref_variant in ref_variants:
+            if config.board_variant_whitelist and ref_variant not in config.board_variant_whitelist:
+                return True
+            elif ref_variant in config.board_variant_blacklist:
                 return True
 
     return False
